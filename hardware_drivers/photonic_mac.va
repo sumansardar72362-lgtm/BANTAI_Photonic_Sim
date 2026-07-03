@@ -1,0 +1,25 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// BANTAI Photonic MAC Unit - Hardware Blueprint
+module bantai_photonic_mac(laser_in, voltage_a, voltage_b, optical_out);
+    
+    // ইনপুট এবং আউটপুট পোর্ট ডিক্লেয়ারেশন
+    input laser_in;              // পাম্প লেজার থেকে আসা মূল আলো
+    input voltage_a, voltage_b;  // EOM থেকে আসা ম্যাট্রিক্স ডেটা (ইলেকট্রিক ভোল্টেজ)
+    output optical_out;          // গুণ হওয়ার পর বের হওয়া ফোটোনিক রেজাল্ট
+
+    // সিগন্যালের ধরন (Electrical vs Optical)
+    electrical voltage_a, voltage_b;
+    optical laser_in, optical_out;
+
+    // হার্ডওয়্যার অ্যানালগ ব্লক (যেখানে ফিজিক্সের ম্যাজিকটা হয়)
+    analog begin
+        /* লজিক: লেজারের আলোর সাথে মাদারবোর্ডের ভোল্টেজ (ডেটা) মিশিয়ে 
+         রিং রেজোনেটরের মাধ্যমে ম্যাট্রিক্স গুণ করা হচ্ছে। 
+         এখানে 0.99 হলো সেই অপটিক্যাল এফিসিয়েন্সি বা লস।
+        */
+        Opwr(optical_out) <+ Opwr(laser_in) * (V(voltage_a) * V(voltage_b)) * 0.99;
+    end
+
+endmodule

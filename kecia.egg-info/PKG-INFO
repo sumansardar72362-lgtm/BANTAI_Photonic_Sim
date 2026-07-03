@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: kecia
+Version: 1.0.0
+Summary: Core SDK for Kecia Diamond-Glass Hybrid Photonic Chip
+Author: S Sardar
+Requires-Dist: numpy
+Dynamic: author
+Dynamic: requires-dist
+Dynamic: summary

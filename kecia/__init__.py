@@ -1,0 +1,1 @@
+# Kecia Photonic Engine Initialized

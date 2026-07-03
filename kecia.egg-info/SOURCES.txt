@@ -1,0 +1,11 @@
+README.md
+setup.py
+kecia/__init__.py
+kecia/bridge.py
+kecia/nn.py
+kecia/optim.py
+kecia.egg-info/PKG-INFO
+kecia.egg-info/SOURCES.txt
+kecia.egg-info/dependency_links.txt
+kecia.egg-info/requires.txt
+kecia.egg-info/top_level.txt
