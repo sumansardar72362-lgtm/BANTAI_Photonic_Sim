@@ -1,14 +1,7 @@
 import os
-from dotenv import load_dotenv
 
-# .env ফাইল থেকে ডেটা লোড করা
-load_dotenv()
-
-# Gemini API Key
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-if not GEMINI_API_KEY:
-    raise ValueError("⚠️ GEMINI_API_KEY is missing! Please check your .env file.")
+# ১. ঠিক এইখানে তোমার সম্পূর্ণ API Key-টি ডাবল কোটেশনের (" ") ভেতরে বসিয়ে দাও
+GEMINI_API_KEY = "AQ.Ab8RN6IEA6iVDoBNxjFqr998pVPCtXhp77OKty_GQotyeoLNNQ"
 
 # রিপোর্টের ফোল্ডার পাথ
 REPORTS_DIR = os.path.join(os.path.dirname(__file__), "reports")
