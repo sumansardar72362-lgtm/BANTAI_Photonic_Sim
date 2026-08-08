@@ -21,3 +21,15 @@ AI_Report_Generator/venv/
 AI_Report_Generator/.env
 AI_Report_Generator/reports/
 *.docx
+
+# C++ Build Files & Logs
+*.obj
+*.o
+build/
+Debug/
+Release/
+*.log
+
+# IDE & Editor folders
+.vscode/
+.idea/
