@@ -59,6 +59,34 @@ def train_photonic_network():
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.legend()
     plt.show()
+    # ... (আগের গ্রাফের কোড)
+    plt.show()
+
+    # ----------------------------------------------------
+    # 💾 ম্যাজিক: মডেল সেভ এবং লোড করা
+    # ----------------------------------------------------
+    print("\n--- Testing Model Persistence ---")
+    
+    # ১. মডেলটি 'models' ফোল্ডারে সেভ করা
+    from src.kecia.utils import save_model, load_model
+    save_path = "models/my_photonic_model.kecia"
+    save_model(model, save_path)
+
+    # ২. একটি একদম নতুন 'ফাঁকা' মডেল তৈরি করা
+    print("🛠️ Creating a brand new, empty model...")
+    new_model = Sequential(
+        Linear5D(in_features=1, out_features=8),
+        ReLU5D(),
+        Linear5D(in_features=8, out_features=1)
+    )
+    
+    # ৩. সেই ফাঁকা মডেলে আমাদের সেভ করা ব্রেইন লোড করা
+    load_model(new_model, save_path)
+    
+    # ৪. টেস্ট করা যে নতুন মডেলটা আগেরটার মতোই ২, ৪, ৬ প্রেডিক্ট করতে পারে কি না!
+    print(f"🤖 New Loaded Model Predictions: \n{new_model(X).data.flatten()}")
+    print("------------------------------------------------\n")
 
 if __name__ == "__main__":
     train_photonic_network()
+

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bantai-kecia"
+version = "1.0.0"
+authors = [
+  { name="sumansardar72362-lgtm", email="sumansardar72362@gmail.com" },
+]
+description = "A Photonic Deep Learning SDK with C++ Backend"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy",
+    "matplotlib"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/sumansardar72362-lgtm/BANTAI_Photonic_Sim"
+"Bug Tracker" = "https://github.com/sumansardar72362-lgtm/BANTAI_Photonic_Sim/issues"
