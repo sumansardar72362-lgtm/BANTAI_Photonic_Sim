@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.kecia.core.tensor5d import Tensor5D
 from src.kecia.nn import Linear5D, ReLU5D, Sequential, MSELoss
 from src.kecia.optim.sgd import SGD
+from src.kecia.optim.adam import Adam
 
 def train_photonic_network():
     print("\n🧠 --- BANTAI AI DEEP TRAINING (CLEAN API) --- 🧠\n")
@@ -26,7 +27,7 @@ def train_photonic_network():
     criterion = MSELoss()
     
     # 💥 ম্যাজিক: আর কোনো ম্যানুয়াল লুপ নেই!
-    optimizer = SGD(model.get_parameters(), lr=0.005)
+    optimizer = Adam(model.get_parameters(), lr=0.05)
 
     print("\n🚀 Starting 500 Epochs of Deep Training...\n")
     epochs = 500
