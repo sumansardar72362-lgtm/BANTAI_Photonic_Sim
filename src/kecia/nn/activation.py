@@ -1,14 +1,17 @@
 import numpy as np
-from src.kecia.core.tensor5d import Tensor5D
+from kecia.core.tensor5d import Tensor5D
 
 class ReLU5D:
     """
-    Photonic Rectified Linear Unit (ReLU).
+    Photonic Rectified Linear Unit (ReLU) / Saturable Absorber.
     ফোটোনিক চিপে 'থ্রেশহোল্ডিং ফিল্টার' হিসেবে কাজ করে।
-    যেসব আলোর সিগন্যাল (ভ্যালু) 0 এর নিচে, তাদের ব্লক করে দেয় (Noise Reduction)।
+    যেসব আলোর সিগন্যাল (ভ্যালু) threshold এর নিচে, তাদের ব্লক করে দেয় (Noise Reduction)।
     """
-    def __init__(self):
+    def __init__(self, threshold=0.0):
+        self.threshold = threshold
         self.last_input = None
+        if self.threshold > 0:
+            print(f"🔮 Photonic Saturable Absorber Enabled | Noise Threshold: {self.threshold}W")
 
     def forward(self, x):
         if not isinstance(x, Tensor5D):
@@ -17,15 +20,15 @@ class ReLU5D:
         # ব্যাকওয়ার্ড পাসের জন্য অরিজিনাল ইনপুট সেভ করে রাখা
         self.last_input = x.data
         
-        # ম্যাথ: f(x) = max(0, x) (নেগেটিভ ভ্যালুগুলোকে 0 করে দেওয়া)
-        out_data = np.maximum(0, self.last_input).astype(np.float32)
+        # ফিজিক্স/ম্যাথ: থ্রেশহোল্ডের নিচের নয়েজ আলোকে ব্লক করা (0 করে দেওয়া)
+        out_data = np.where(self.last_input < self.threshold, 0.0, self.last_input).astype(np.float32)
         return Tensor5D(out_data, device=x.device)
 
     def backward(self, grad_output):
         grad_out_data = grad_output.data if isinstance(grad_output, Tensor5D) else grad_output
         
-        # Gradient ক্যালকুলেশন: ইনপুট > 0 হলে 1, নইলে 0
-        relu_grad = (self.last_input > 0).astype(np.float32)
+        # Gradient ক্যালকুলেশন: ইনপুট > threshold হলে 1, নইলে 0
+        relu_grad = (self.last_input > self.threshold).astype(np.float32)
         
         # চেইন রুল (Chain Rule) অনুযায়ী পেছনের গ্রেডিয়েন্টের সাথে গুণ
         in_grad = (grad_out_data * relu_grad).astype(np.float32)

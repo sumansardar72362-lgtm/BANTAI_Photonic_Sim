@@ -1,4 +1,6 @@
 import numpy as np
+# C++ Tensor5D এর সাথে টাইপ চেকিংয়ের জন্য
+from kecia.core.tensor5d import Tensor5D 
 
 class Adam:
     """
@@ -13,13 +15,14 @@ class Adam:
         self.epsilon = epsilon
         self.t = 0 
 
-        self.m = [np.zeros_like(p.data) for p in self.params]
-        self.v = [np.zeros_like(p.data) for p in self.params]
+        # 💥 ফিক্স: Tensor5D অবজেক্ট থেকে শেপ নিয়ে জিরো ম্যাট্রিক্স বানানো
+        self.m = [np.zeros_like(p.data if hasattr(p, 'data') else p) for p in self.params]
+        self.v = [np.zeros_like(p.data if hasattr(p, 'data') else p) for p in self.params]
 
     def zero_grad(self):
         for p in self.params:
             if hasattr(p, 'grad') and p.grad is not None:
-                p.grad = np.zeros_like(p.data)
+                p.grad = None # জিরো ম্যাট্রিক্সের বদলে None করে দেওয়াটা মেমরির জন্য ভালো
 
     def step(self):
         self.t += 1
@@ -28,8 +31,8 @@ class Adam:
             if not hasattr(p, 'grad') or p.grad is None:
                 continue
 
-            # 💥 ফিক্স: Tensor5D অবজেক্ট থাকলে সেখান থেকে শুধু data (numpy array) বের করে নেওয়া
-            grad = p.grad.data if hasattr(p.grad, 'data') else p.grad
+            # 💥 ফিক্স: p.grad যদি Tensor5D হয়, তবে .data বের করে নাও
+            grad = p.grad.data if isinstance(p.grad, Tensor5D) else p.grad
 
             # 1. Update biased first moment estimate
             self.m[i] = self.beta1 * self.m[i] + (1 - self.beta1) * grad
@@ -44,4 +47,10 @@ class Adam:
             v_hat = self.v[i] / (1 - (self.beta2 ** self.t))
 
             # 5. Update weights & biases
-            p.data -= self.lr * m_hat / (np.sqrt(v_hat) + self.epsilon)
+            # 💥 ফিক্স: update_step বের করে সেটাকে p.data থেকে বিয়োগ করা হচ্ছে
+            update_step = self.lr * m_hat / (np.sqrt(v_hat) + self.epsilon)
+            
+            if isinstance(p, Tensor5D):
+                p.data -= update_step
+            else:
+                p -= update_step

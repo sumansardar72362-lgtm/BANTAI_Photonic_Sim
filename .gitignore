@@ -33,3 +33,9 @@ Release/
 # IDE & Editor folders
 .vscode/
 .idea/
+
+dist/
+*.egg-info/
+models/*.kecia
+__pycache__/
+.pypirc

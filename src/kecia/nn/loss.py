@@ -1,5 +1,5 @@
 import numpy as np
-from src.kecia.core.tensor5d import Tensor5D
+from kecia.core.tensor5d import Tensor5D
 
 class MSELoss:
     """
