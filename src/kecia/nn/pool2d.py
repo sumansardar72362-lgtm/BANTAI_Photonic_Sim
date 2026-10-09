@@ -2,50 +2,56 @@ import numpy as np
 from kecia.core.tensor5d import Tensor5D
 
 class MaxPool2D:
-    def __init__(self, kernel_size=2, stride=None):
-        self.kernel_size = kernel_size
-        self.stride = stride if stride is not None else kernel_size
+    def __init__(self, pool_size=2, stride=2):
+        self.pool_size = pool_size
+        self.stride = stride
         self.last_input = None
 
-    def forward(self, x):
-        if not isinstance(x, Tensor5D):
-            x = Tensor5D(x)
-        self.last_input = x
-        batch_size, channels, h, w = x.shape
-        out_h = h // self.kernel_size
-        out_w = w // self.kernel_size
+    def forward(self, input_tensor):
+        self.last_input = input_tensor.data
+        batch_size, channels, height, width = self.last_input.shape
         
-        reshaped = x.data.reshape(batch_size, channels, out_h, self.kernel_size, out_w, self.kernel_size)
-        out_data = reshaped.max(axis=(3, 5))
-        return Tensor5D(out_data, device=x.device)
+        # আউটপুটের নতুন সাইজ হিসাব করা
+        out_height = (height - self.pool_size) // self.stride + 1
+        out_width = (width - self.pool_size) // self.stride + 1
+        
+        output = np.zeros((batch_size, channels, out_height, out_width))
+        
+        # Max Pooling অপারেশন (ভিডিও ফ্রেমের সবচেয়ে গুরুত্বপূর্ণ পিক্সেল বের করা)
+        for i in range(out_height):
+            for j in range(out_width):
+                h_start = i * self.stride
+                h_end = h_start + self.pool_size
+                w_start = j * self.stride
+                w_end = w_start + self.pool_size
+                
+                output[:, :, i, j] = np.max(
+                    self.last_input[:, :, h_start:h_end, w_start:w_end], axis=(2, 3)
+                )
+                
+        return Tensor5D(output)
 
     def backward(self, grad_output):
-        """যে পিক্সেলগুলো সিলেক্ট হয়েছিল, গ্রেডিয়েন্ট শুধু তাদের কাছেই যাবে"""
-        if not isinstance(grad_output, Tensor5D):
-            grad_output = Tensor5D(grad_output)
-            
-        x_data = self.last_input.data
-        batch_size, channels, h, w = x_data.shape
-        out_h, out_w = grad_output.shape[2], grad_output.shape[3]
+        # ব্যাকপ্রোপাগেশনের সময় গ্রেডিয়েন্ট শুধু ম্যাক্সিমাম পিক্সেলগুলোতে যাবে
+        batch_size, channels, height, width = self.last_input.shape
+        grad_input = np.zeros_like(self.last_input)
+        grad_out_data = grad_output.data
         
-        # খালি ফ্রেম তৈরি (যেখানে গ্রেডিয়েন্ট বসবে)
-        grad_input = np.zeros_like(x_data)
+        _, _, out_height, out_width = grad_out_data.shape
         
-        # সহজ Numpy ট্রিক: Kronecker product দিয়ে গ্রেডিয়েন্টকে বড় করা এবং Max Mask দিয়ে ফিল্টার করা
-        grad_expanded = np.repeat(np.repeat(grad_output.data, self.kernel_size, axis=2), self.kernel_size, axis=3)
-        
-        # ইনপুটের ম্যাক্সিমাম ভ্যালুগুলোর পজিশন বের করে সেখানে গ্রেডিয়েন্ট বসানো
-        reshaped_x = x_data.reshape(batch_size, channels, out_h, self.kernel_size, out_w, self.kernel_size)
-        max_vals = reshaped_x.max(axis=(3, 5), keepdims=True)
-        max_vals = np.repeat(np.repeat(max_vals, self.kernel_size, axis=3), self.kernel_size, axis=5).reshape(x_data.shape)
-        
-        mask = (x_data == max_vals)
-        grad_input = mask * grad_expanded
-        
-        return Tensor5D(grad_input, device=grad_output.device)
-
-    def parameters(self):
-        return []
-
-    def __call__(self, x):
-        return self.forward(x)
+        for i in range(out_height):
+            for j in range(out_width):
+                h_start = i * self.stride
+                h_end = h_start + self.pool_size
+                w_start = j * self.stride
+                w_end = w_start + self.pool_size
+                
+                # ইনপুট প্যাচ বের করা
+                patch = self.last_input[:, :, h_start:h_end, w_start:w_end]
+                max_val = np.max(patch, axis=(2, 3), keepdims=True)
+                
+                # ম্যাক্সিমাম ভ্যালুর লোকেশনে মাস্ক (Mask) তৈরি করা
+                mask = (patch == max_val)
+                grad_input[:, :, h_start:h_end, w_start:w_end] += mask * grad_out_data[:, :, i:i+1, j:j+1]
+                
+        return Tensor5D(grad_input)

@@ -10,8 +10,9 @@ from kecia.nn.conv2d import Conv2D
 from kecia.nn.linear5d import Linear5D
 from kecia.nn.activation import ReLU5D
 from kecia.optim import Adam
+from kecia.io import save_model  # 👈 নতুন যোগ করা হলো
 
-# 🛠️ ছোট্ট একটি Flatten ক্লাস (Conv2D-এর 4D ডেটাকে Linear-এর 2D তে রূপান্তর করার জন্য)
+# 🛠️ ছোট্ট একটি Flatten ক্লাস
 class Flatten:
     def forward(self, x):
         self.last_shape = x.shape
@@ -30,11 +31,11 @@ class PhotonicVisionModel:
     def __init__(self):
         self.layers = [
             Conv2D(in_channels=1, out_channels=4, kernel_size=3),
-            ReLU5D(threshold=0.01),  # 👈 ফিজিক্স থ্রেশহোল্ড (Loss কমানোর মূল চাবিকাঠি)
+            ReLU5D(threshold=0.01),
             Flatten(),
-            Linear5D(4 * 6 * 6, 16), # 8x8 ইমেজ Conv-এর পর 6x6 হয়ে যায়
+            Linear5D(4 * 6 * 6, 16),
             ReLU5D(),
-            Linear5D(16, 5)          # ৫টা ক্লাসের জন্য আউটপুট
+            Linear5D(16, 5)
         ]
     
     def forward(self, x):
@@ -60,17 +61,12 @@ class PhotonicVisionModel:
 # ==========================================
 
 print("Preparing and Normalizing Data...")
-# ১০টা ডামি 8x8 ইমেজ তৈরি করা হচ্ছে
 X_train = np.random.rand(10, 1, 8, 8).astype(np.float32) 
-
-# 👈 ১. ডেটা নরমালাইজেশন (0-1 এর মধ্যে আনা হলো)
 X_train = X_train / np.max(np.abs(X_train)) 
 
-# ৫টা ক্লাসের জন্য One-hot labels
 Y_train = np.zeros((10, 5), dtype=np.float32)
 for i in range(10): Y_train[i, np.random.randint(0, 5)] = 1.0
 
-# 👈 ২. মডেল এবং লার্নিং রেট সেট করা হলো
 model = PhotonicVisionModel()
 optim = Adam(model.parameters(), lr=0.005) 
 
@@ -90,3 +86,9 @@ for epoch in range(20):
     optim.step()
     
     print(f"Epoch {epoch+1:02d}/20 | Loss: {loss:.6f}")
+
+# ==========================================
+# 💾 ট্রেইনিং শেষে মডেল সেভ করা (5D Glass Memory)
+# ==========================================
+print("\nInitiating 5D Glass Memory Storage...")
+save_model(model.parameters(), "protikriya_vision_v1.kecia") # 👈 মডেল সেভ হচ্ছে

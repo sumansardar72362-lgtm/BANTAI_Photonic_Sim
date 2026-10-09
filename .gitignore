@@ -39,3 +39,6 @@ dist/
 models/*.kecia
 __pycache__/
 .pypirc
+
+*.whl
+*.pyd

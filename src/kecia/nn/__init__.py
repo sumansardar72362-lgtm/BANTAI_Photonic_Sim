@@ -9,3 +9,4 @@ from .sequential import Sequential
 from .conv2d import Conv2D
 from .pool2d import MaxPool2D
 from .flatten import Flatten
+from .dropout import Dropout
