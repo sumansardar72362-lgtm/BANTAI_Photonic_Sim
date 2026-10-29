@@ -37,18 +37,22 @@ ext_modules = [
     Extension(
         "kecia.backend.photonic_backend",
         ["src/kecia/backend/photonic_core.cpp"],
-        include_dirs=[pybind11.get_include()],
+        # 👈 FIX 1: তোমার কাস্টম includes লিস্টটা এখানে দিতে হবে
+        include_dirs=includes, 
+        # 👈 FIX 2: তোমার কাস্টম library_dirs লিস্টটা এখানে দিতে হবে
+        library_dirs=library_dirs, 
         language="c++",
-        extra_compile_args=["-std=c++11", "-O3"], # O3 হলো C++ এর হাই-পারফরম্যান্স অপটিমাইজেশন
+        # 👈 FIX 3: Windows MSVC এর জন্য সঠিক ফ্ল্যাগ
+        extra_compile_args=["/std:c++14", "/O2"], 
     ),
 ]
 
 setup(
     name="bantai-kecia",
-    version="2.0.0", # 🚀 ফিউচারিস্টিক রিলিজ
+    version="2.0.1",
     author="S Sardar",
     description="BANTAI Kecia - Deep Learning framework simulating Diamond-Glass Hybrid Photonic Chips.",
-    packages=["kecia", "kecia.nn", "kecia.backend"],
+    packages=["kecia", "kecia.nn", "kecia.backend", "kecia.core"],
     package_dir={"": "src"},
     ext_modules=ext_modules,
     install_requires=["pybind11>=2.10.0"],
