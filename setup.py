@@ -3,6 +3,7 @@ import pybind11
 import os
 import glob
 
+
 # ১. rc.exe খোঁজার লজিক
 bin_paths = glob.glob(r"C:\Program Files (x86)\Windows Kits\10\bin\*\x64")
 if bin_paths:
@@ -32,27 +33,28 @@ if lib_um_paths: library_dirs.append(lib_um_paths[-1])
 if "LIB" in os.environ:
     library_dirs += [p for p in os.environ["LIB"].split(";") if p]
 
-# C++ ফোটোনিক কোর এক্সটেনশন কনফিগারেশন
 ext_modules = [
     Extension(
-        "kecia.backend.photonic_backend",          
-        ["src/kecia/backend/photonic_core.cpp"],   
-        include_dirs=includes,      
-        library_dirs=library_dirs,  
-        language="c++"
+        "kecia.backend.photonic_backend",
+        ["src/kecia/backend/photonic_core.cpp"],
+        # 👈 FIX 1: তোমার কাস্টম includes লিস্টটা এখানে দিতে হবে
+        include_dirs=includes, 
+        # 👈 FIX 2: তোমার কাস্টম library_dirs লিস্টটা এখানে দিতে হবে
+        library_dirs=library_dirs, 
+        language="c++",
+        # 👈 FIX 3: Windows MSVC এর জন্য সঠিক ফ্ল্যাগ
+        extra_compile_args=["/std:c++14", "/O2"], 
     ),
 ]
 
 setup(
     name="bantai-kecia",
-    version="1.0.1",
+    version="2.0.1",
     author="S Sardar",
-    description="Core SDK for Kecia Diamond-Glass Hybrid Photonic Chip",
-    package_dir={"": "src"},              # 👈 পাইথনকে ফোল্ডার চেনানো হলো
-    packages=find_packages(where="src"),  # 👈 পাইথনকে ফোল্ডার চেনানো হলো
-    install_requires=[
-        "numpy",
-        "pybind11"
-    ],
+    description="BANTAI Kecia - Deep Learning framework simulating Diamond-Glass Hybrid Photonic Chips.",
+    packages=["kecia", "kecia.nn", "kecia.backend", "kecia.core"],
+    package_dir={"": "src"},
     ext_modules=ext_modules,
+    install_requires=["pybind11>=2.10.0"],
+    python_requires=">=3.8",
 )

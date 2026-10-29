@@ -1,20 +1,27 @@
-<!-- # BANTAI Photonic Compute Stack
-# BANTAI_Photonic_Sim -->
-# BANTAI Photonic Compute Stack
-[![PyPI version](https://badge.fury.io/py/bantai-kecia.svg)](https://pypi.org/project/bantai-kecia/)
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-**A cutting-edge Deep Learning framework simulating Diamond-Glass Hybrid Photonic Chips.**
+# BANTAI Kecia SDK (v2.0.0)
+**A Next-Generation Deep Learning Framework Simulating Diamond-Glass Hybrid Photonic Chips.**
 
-BANTAI Kecia is a lightweight, high-performance neural network SDK that simulates mathematical interference of light waves for deep learning computations (Optical MAC Unit) and uses a custom 5D Glass Memory system (`.kecia` format) for zero-data-loss weight storage.
+[![PyPI version](https://badge.fury.io/py/bantai-kecia.svg)](https://badge.fury.io/py/bantai-kecia)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## ✨ Key Features
-* **Optical MAC Simulation:** Performs Vector-Matrix Multiplication (VMM) at simulated speed-of-light using light intensity and phase.
-* **5D Glass Memory System:** Securely saves and loads trained models using the proprietary `.kecia` format.
-* **Hardware Fallback Logic:** 3-Tier automatic execution fallback (Photonic -> CUDA -> CPU).
-* **Clean PyTorch-like API:** User-friendly and production-ready interface.
-* **Built-in Autograd:** Supports custom Backpropagation and SGD Optimizer.
+**BANTAI Kecia** is a highly optimized, C++ backed Python SDK designed to simulate the physics and computational mechanics of Photonic Neural Networks. Built for the future of AI hardware, it introduces a 3-tier execution architecture, custom physical thermal noise modeling, and dynamic 5D Glass Memory states.
+
+---
+
+## 🌟 Core Features
+
+*   **⚡ C++ Photonic Core:** Heavy matrix computations are routed through a high-performance C++ backend (`pybind11`), bypassing Python's GIL.
+*   **🧠 Built-in Autograd Engine:** Complete forward and backward pass implementation featuring Custom SGD, Leaky ReLU, and dying-neuron prevention.
+*   **🔥 Thermal Simulation:** Real-world physics injection simulating hardware temperature fluctuations and phase-shifter precision errors.
+*   **💾 5D Glass Memory:** Advanced multi-dimensional state tracking for temporal and spatial data storage.
+*   **🔄 3-Tier Hardware Fallback:** Automatic environment scanning and execution routing (`Photonic Hardware` ➔ `CUDA` ➔ `High-Performance CPU`).
+
+---
 
 ## 📦 Installation
-You can easily install the BANTAI SDK via pip:
+
+BANTAI Kecia is available on PyPI. Install it instantly using pip:
+
 ```bash
 pip install bantai-kecia

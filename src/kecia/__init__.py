@@ -1,6 +1,6 @@
 # Kecia Photonic Engine Initialized
 # src/kecia/__init__.py
-__version__ = "1.0.0"
+__version__ = "2.0.1"
 print(f"🔥 BANTAI Kecia SDK v{__version__} Initialized (Photonic Backend Ready)")
 
 # কোর মডিউলগুলোকে সহজে ব্যবহারযোগ্য করা হচ্ছে
